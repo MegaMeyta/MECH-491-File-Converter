@@ -12,12 +12,15 @@ string removeSpaces(string line);
 
 vector<string> getAttributes(string line);
 
+workstation station;
+toolList workTools;
+
 int main() {
-	string line = "My Things/ candy , computer, games, 20,  %terms , history";
-	vector<string> things = getAttributes(line);
-	for (int i = 0; i < things.size(); i++) {
-		cout << things[i] + "\n";
-	}
+	
+
+
+
+
 	return 0;
 }
 
@@ -25,7 +28,6 @@ vector<string> getAttributes(string line) {
 	vector<string> attributes;
 	string attribute;
 	int start = 0;
-	int end;
 	for (int i = 0; i < line.size(); i++) {
 		if (line[i] == '/') {
 			start = i + 1;

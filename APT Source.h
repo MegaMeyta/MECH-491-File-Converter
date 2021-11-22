@@ -1,5 +1,5 @@
-//This file contains all classes and functions for APT Source translation functions.
-//All classes and functions are within the namespace apt to prevent any conflicts from other header files.
+//This ifstream contains all classes and functions for APT Source translation functions.
+//All classes and functions are within the namespace apt to prevent any conflicts from other header ifstreams.
 //The definitions for everything can be found in "APT Source.cpp"
 
 #pragma once
@@ -25,77 +25,94 @@ namespace apt {
 		map<string, tool> dictionary;
 	};
 
-	//All the functions below have all the global variables from the main function and a vector made of all the atributes for the command (made in the main function)
+	//Main Class that contains all variables and functions related to converting the APTSource File
+	class APTSource {
+	public:
+		workstation station;
+		toolList toollist;
+		string inputFileName;
+		string outputFileName;
+		ifstream input;
+		ofstream output;
 
-	void CALSUB(FILE& output, workstation& station, toolList& worktools, vector<string> attributes);
+		APTSource(string inputFile);
 
-	void COOLNT(FILE& output, workstation& station, toolList& worktools, vector<string> attributes);
+		string removeSpaces(string line);
 
-	void CUTCOM(FILE& output, workstation& station, toolList& worktools, vector<string> attributes);
+		vector<string> getAttributes(string line);
 
-	void CYCLE(FILE& output, workstation& station, toolList& worktools, vector<string> attributes);
+		void CALSUB(vector<string> attributes);
 
-	void END(FILE& output, workstation& station, toolList& worktools, vector<string> attributes);
+		void COOLNT(vector<string> attributes);
 
-	void FEDRAT(FILE& output, workstation& station, toolList& worktools, vector<string> attributes);
+		void CUTCOM(vector<string> attributes);
 
-	void LIMIT(FILE& output, workstation& station, toolList& worktools, vector<string> attributes);
+		void CYCLE(vector<string> attributes);
 
-	void LOADTL(FILE& output, workstation& station, toolList& worktools, vector<string> attributes);
+		void END(vector<string> attributes);
 
-	void MACHIN(FILE& output, workstation& station, toolList& worktools, vector<string> attributes);
+		void FEDRAT(vector<string> attributes);
 
-	void MOVETO(FILE& output, workstation& station, toolList& worktools, vector<string> attributes);
+		void LIMIT(vector<string> attributes);
 
-	void MSYS(FILE& output, workstation& station, toolList& worktools, vector<string> attributes);
+		void LOADTL(vector<string> attributes);
 
-	void OFSTNO(FILE& output, workstation& station, toolList& worktools, vector<string> attributes);
+		void MACHIN(vector<string> attributes);
 
-	void OPNAME(FILE& output, workstation& station, toolList& worktools, vector<string> attributes);
+		void MOVETO(vector<string> attributes);
 
-	void OPTYPE(FILE& output, workstation& station, toolList& worktools, vector<string> attributes);
+		void MSYS(vector<string> attributes);
 
-	void ORIGIN(FILE& output, workstation& station, toolList& worktools, vector<string> attributes);
+		void OFSTNO(vector<string> attributes);
 
-	void PARTNO(FILE& output, workstation& station, toolList& worktools, vector<string> attributes);
+		void OPNAME(vector<string> attributes);
 
-	void PPRINT(FILE& output, workstation& station, toolList& worktools, vector<string> attributes);
+		void OPTYPE(vector<string> attributes);
 
-	void RAPID(FILE& output, workstation& station, toolList& worktools, vector<string> attributes);
+		void ORIGIN(vector<string> attributes);
 
-	void REWIND(FILE& output, workstation& station, toolList& worktools, vector<string> attributes);
+		void PARTNO(vector<string> attributes);
 
-	void SPINDL(FILE& output, workstation& station, toolList& worktools, vector<string> attributes);
+		void PPRINT(vector<string> attributes);
 
-	void STOP(FILE& output, workstation& station, toolList& worktools, vector<string> attributes);
-	
-	void TLNAME(FILE& output, workstation& station, toolList& worktools, vector<string> attributes);
+		void RAPID(vector<string> attributes);
 
-	void TOOLNO(FILE& output, workstation& station, toolList& worktools, vector<string> attributes);
+		void REWIND(vector<string> attributes);
 
-	void GOTO(FILE& output, workstation& station, toolList& worktools, vector<string> attributes);
+		void SPINDL(vector<string> attributes);
 
-	void MOVE(FILE& output, workstation& station, toolList& worktools, vector<string> attributes);
+		void STOP(vector<string> attributes);
 
-	void TOLER(FILE& output, workstation& station, toolList& worktools, vector<string> attributes);
+		void TLNAME(vector<string> attributes);
 
-	void INTOL(FILE& output, workstation& station, toolList& worktools, vector<string> attributes);
+		void TOOLNO(vector<string> attributes);
 
-	void OUTTOL(FILE& output, workstation& station, toolList& worktools, vector<string> attributes);
+		void GOTO(vector<string> attributes);
 
-	void CUTTER(FILE& output, workstation& station, toolList& worktools, vector<string> attributes);
+		void MOVE(vector<string> attributes);
 
-	void MULTAX(FILE& output, workstation& station, toolList& worktools, vector<string> attributes);
+		void TOLER(vector<string> attributes);
 
-	void UNITS(FILE& output, workstation& station, toolList& worktools, vector<string> attributes);
+		void INTOL(vector<string> attributes);
 
-	void TLAXIS(FILE& output, workstation& station, toolList& worktools, vector<string> attributes);
+		void OUTTOL(vector<string> attributes);
 
-	void FINI(FILE& output, workstation& station, toolList& worktools, vector<string> attributes);
+		void CUTTER(vector<string> attributes);
 
-	void CONTRL(FILE& output, workstation& station, toolList& worktools, vector<string> attributes);
+		void MULTAX(vector<string> attributes);
 
-	void SYN(FILE& output, workstation& station, toolList& worktools, vector<string> attributes);
+		void UNITS(vector<string> attributes);
 
-	void MOVARC(FILE& output, workstation& station, toolList& worktools, vector<string> attributes);
+		void TLAXIS(vector<string> attributes);
+
+		void FINI(vector<string> attributes);
+
+		void CONTRL(vector<string> attributes);
+
+		void SYN(vector<string> attributes);
+
+		void MOVARC(vector<string> attributes);
+
+		void convert();
+	};
 }

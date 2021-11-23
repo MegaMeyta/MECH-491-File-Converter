@@ -10,8 +10,8 @@ using namespace apt;
 
 int main() {
 
-	APTSource basic("interfering.txt");
-
+	APTSource basic("start.txt");
+	basic.convert();
 
 
 	return 0;

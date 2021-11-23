@@ -17,6 +17,8 @@ APTSource::APTSource(string inputFile) {
 	else {
 		cout << "File Does Not Exist";
 	}
+
+
 }
 
 string APTSource::removeSpaces(string line) {
@@ -53,7 +55,92 @@ vector<string> APTSource::getAttributes(string line) {
 }
 
 void APTSource::convert() {
+	input.open(inputFileName);
+	int temp = inputFileName.find_last_of('.');
+	outputFileName = inputFileName.substr(0, temp) + ".gcode";
+	output.open(outputFileName);
+	string line;
+	string command;
+	vector<string> attributes;
+	while (getline(input, line)) {
+		temp = line.find_first_of('/');
+		command = removeSpaces(line.substr(0, temp));
+		attributes = getAttributes(line);
 
+		if (command == "CALSUB")
+			CALSUB(attributes);
+		if (command == "COOLNT")
+			COOLNT(attributes);
+		if (command == "CUTCOM")
+			CUTCOM(attributes);
+		if (command == "CYCLE")
+			CYCLE(attributes);
+		if (command == "END")
+			END(attributes);
+		if (command == "FEDRAT")
+			FEDRAT(attributes);
+		if (command == "LIMIT")
+			LIMIT(attributes);
+		if (command == "LOADTL")
+			LOADTL(attributes);
+		if (command == "MACHIN")
+			MACHIN(attributes);
+		if (command == "MOVETO")
+			MOVETO(attributes);
+		if (command == "MSYS")
+			MSYS(attributes);
+		if (command == "OFSTNO")
+			OFSTNO(attributes);
+		if (command == "OPNAME")
+			OPNAME(attributes);
+		if (command == "OPTYPE")
+			OPTYPE(attributes);
+		if (command == "ORIGIN")
+			ORIGIN(attributes);
+		if (command == "PARTNO")
+			PARTNO(attributes);
+		if (command == "PPRINT")
+			PPRINT(attributes);
+		if (command == "RAPID")
+			RAPID(attributes);
+		if (command == "SPINDL")
+			SPINDL(attributes);
+		if (command == "STOP")
+			STOP(attributes);
+		if (command == "TLNAME")
+			TLNAME(attributes);
+		if (command == "TOOLNO")
+			TOOLNO(attributes);
+		if (command == "GOTO")
+			GOTO(attributes);
+		if (command == "MOVE")
+			MOVE(attributes);
+		if (command == "TOLER")
+			TOLER(attributes);
+		if (command == "INTOL")
+			INTOL(attributes);
+		if (command == "OUTTOL")
+			OUTTOL(attributes);
+		if (command == "CUTTER")
+			CUTTER(attributes);
+		if (command == "MULTAX")
+			MULTAX(attributes);
+		if (command == "UNITS")
+			UNITS(attributes);
+		if (command == "TLAXIS")
+			TLAXIS(attributes);
+		if (command == "FINI")
+			FINI(attributes);
+		if (command == "CONTRL")
+			CONTRL(attributes);
+		if (command == "SYN")
+			SYN(attributes);
+		if (command == "MOVARC")
+			MOVARC(attributes);
+	}
+
+	input.close();
+	output.close();
 }
 
 void APTSource::CALSUB(vector<string> attributes) {

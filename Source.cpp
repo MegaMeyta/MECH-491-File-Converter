@@ -11,7 +11,7 @@ using namespace apt;
 int main() {
 
 	APTSource basic("start.txt");
-	basic.convert();
+	basic.counter();
 
 
 	return 0;

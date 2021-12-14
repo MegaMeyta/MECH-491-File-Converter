@@ -14,22 +14,30 @@ namespace apt {
 
 	//This is where all global variables are stored (i.e. origin, tool, feedrate)
 	class workstation {
+	public: 
+		bool rapid;
+		string unit;
+		double feedrate;
+		double  absolute[3][3];
+		string tool_type;
+		double tool_diameter;
+		double tool_upper_radius;
+		double tool_lower_radius;
+		double tool_length;
+		double tool_taper_angle;
+		double tool_tip_angle;
+		double tool_x_center_r1;
+		double tool_y_center_r1;
+		double tool_x_center_r2;
+		double tool_y_center_r2;
 
-	};
-
-	class tool {
-
-	};
-
-	class toolList {
-		map<string, tool> dictionary;
+		workstation();
 	};
 
 	//Main Class that contains all variables and functions related to converting the APTSource File
 	class APTSource {
 	public:
 		workstation station;
-		toolList toollist;
 		string inputFileName;
 		string outputFileName;
 		ifstream input;
@@ -41,7 +49,7 @@ namespace apt {
 
 		vector<string> getAttributes(string line);
 
-		void CALSUB(vector<string> attributes);
+		/*void CALSUB(vector<string> attributes);
 
 		void COOLNT(vector<string> attributes);
 
@@ -111,8 +119,23 @@ namespace apt {
 
 		void SYN(vector<string> attributes);
 
-		void MOVARC(vector<string> attributes);
+		void MOVARC(vector<string> attributes);*/
+
+		void TOOL_PATH(vector<string> attributes);
+		void TLDATA(vector<string> attributes);
+		void FEDRAT(vector<string> attributes);
+		void RAPID();
+		void CYCLE(vector<string> attributes);
+		void GOTO(vector<string> attributes);
+		void GODTLA(vector<string> attributes);
+		void CIRCLE(vector<string> attributes);
+		void MSYS(vector<string> attributes);
+		void CSLF(vector<string> attributes);
+		void END_OF_PATH();
+
 
 		void convert();
+
+		void counter();
 	};
 }

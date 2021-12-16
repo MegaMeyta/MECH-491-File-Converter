@@ -16,6 +16,26 @@ workstation::workstation() {
 	}
 	feedrate = 0;
 	unit = "metric";
+	current_x = 0;
+	current_y = 0;
+	current_z = 0;
+	current_i = 0;
+	current_j = 0;
+	current_k = 1;
+
+	arc = false;
+	arc_x = 0;
+	arc_y = 0;
+	arc_z = 0;
+	arc_i = 0;
+	arc_j = 0;
+	arc_k = 0;
+	arc_r = 0;
+	arc_t = 0;
+	arc_f = 0;
+	arc_d = 0;
+	arc_e = 0;
+	
 	tool_diameter = 0;
 	tool_upper_radius = 0;
 	tool_lower_radius = 0;
@@ -345,212 +365,6 @@ void APTSource::counter() {
 	input.close(); 
 }
 
-/*void APTSource::CALSUB(vector<string> attributes) {
-	if (attributes[3] == "CLDATA") {
-
-	}
-
-	if (attributes[3] == "SYSTEM") {
-
-	}
-
-	if (attributes[3] == "INCLUD") {
-
-	}
-
-}
-
-void APTSource::COOLNT(vector<string> attributes) {
-
-}
-
-void APTSource::CUTCOM(vector<string> attributes) {
-	if (attributes[2] == "ON") {
-		if (attributes[3] == "LENGTH") {
-
-		}
-		if (attributes[3] == "XCOORD") {
-
-		}
-		if (attributes[3] == "YCOORD") {
-
-		}
-		if (attributes[3] == "ZCOORD") {
-
-		}
-		if (attributes[3] == "ADJUST") {
-
-		}
-	}
-	if (attributes[2] == "OFF") {
-		if (attributes[3] == "LENGTH") {
-
-		}
-		if (attributes[3] == "XCOORD") {
-
-		}
-		if (attributes[3] == "YCOORD") {
-
-		}
-		if (attributes[3] == "ZCOORD") {
-
-		}
-		if (attributes[3] == "ADJUST") {
-
-		}
-	}
-	if (attributes[2] == "LEFT") {
-		
-	}
-	if (attributes[2] == "RIGHT") {
-
-	}
-	if (attributes[2] == "CORNER") {
-
-	}
-	if (attributes[2] == "TRANSL") {
-
-	}
-	if (attributes[2] == "ROUND") {
-
-	}
-	if (attributes[2] == "NORMAL") {
-
-	}
-}
-
-void APTSource::CYCLE(vector<string> attributes) {
-
-}
-
-void APTSource::END(vector<string> attributes) {
-
-}
-
-void APTSource::FEDRAT(vector<string> attributes) {
-
-}
-
-void APTSource::LIMIT(vector<string> attributes) {
-
-}
-
-void APTSource::LOADTL(vector<string> attributes) {
-
-}
-
-void APTSource::MACHIN(vector<string> attributes) {
-
-}
-
-void APTSource::MOVETO(vector<string> attributes) {
-
-}
-
-void APTSource::MSYS(vector<string> attributes) {
-
-}
-
-void APTSource::OFSTNO(vector<string> attributes) {
-
-}
-
-void APTSource::OPNAME(vector<string> attributes) {
-
-}
-
-void APTSource::OPTYPE(vector<string> attributes) {
-	
-}
-
-void APTSource::ORIGIN(vector<string> attributes) {
-
-}
-
-void APTSource::PARTNO(vector<string> attributes) {
-
-}
-
-void APTSource::PPRINT(vector<string> attributes) {
-
-}
-
-void APTSource::RAPID(vector<string> attributes) {
-
-}
-
-void APTSource::REWIND(vector<string> attributes) {
-
-}
-
-void APTSource::SPINDL(vector<string> attributes) {
-
-}
-
-void APTSource::STOP(vector<string> attributes) {
-
-}
-
-void APTSource::TLNAME(vector<string> attributes) {
-
-}
-
-void APTSource::TOOLNO(vector<string> attributes) {
-
-}
-
-void APTSource::GOTO(vector<string> attributes) {
-
-}
-
-void APTSource::MOVE(vector<string> attributes) {
-
-}
-
-void APTSource::TOLER(vector<string> attributes) {
-
-}
-
-void APTSource::INTOL(vector<string> attributes) {
-
-}
-
-void APTSource::OUTTOL(vector<string> attributes) {
-
-}
-
-void APTSource::CUTTER(vector<string> attributes) {
-
-}
-
-void APTSource::MULTAX(vector<string> attributes) {
-
-}
-
-void APTSource::UNITS(vector<string> attributes) {
-
-}
-
-void APTSource::TLAXIS(vector<string> attributes) {
-
-}
-
-void APTSource::FINI(vector<string> attributes) {
-
-}
-
-void APTSource::CONTRL(vector<string> attributes) {
-
-}
-
-void APTSource::SYN(vector<string> attributes) {
-
-}
-
-void APTSource::MOVARC(vector<string> attributes) {
-
-}*/
-
 void APTSource::TOOL_PATH(vector<string> attributes){}
 void APTSource::TLDATA(vector<string> attributes){}
 void APTSource::FEDRAT(vector<string> attributes){
@@ -569,26 +383,53 @@ void APTSource::CYCLE(vector<string> attributes){}
 void APTSource::GOTO(vector<string> attributes){
 	string new_line;
 	if (attributes.size() > 0) {
-		if (attributes.size() == 6) {
-			if (station.rapid = true) {
-				output << "G00" << " X" << attributes[0] << " Y" << attributes[1] << " Z" << attributes[2] << " I" << attributes[3] << " J" << attributes[4] << " K" << attributes[5] << "\n";
-				station.rapid = false;
+		if (station.arc == false) {
+			if (attributes.size() == 6) {
+				station.current_x = stod(attributes[0]);
+				station.current_y = stod(attributes[1]);
+				station.current_z = stod(attributes[2]);
+				station.current_i = stod(attributes[3]);
+				station.current_j = stod(attributes[4]);
+				station.current_k = stod(attributes[5]);
+
+				if (station.rapid = true) {
+					output << "G00" << " X" << attributes[0] << " Y" << attributes[1] << " Z" << attributes[2] << " I" << attributes[3] << " J" << attributes[4] << " K" << attributes[5] << "\n";
+					station.rapid = false;
+				}
+				if (station.rapid = false) {
+					output << "G01" << " X" << attributes[0] << " Y" << attributes[1] << " Z" << attributes[2] << " I" << attributes[3] << " J" << attributes[4] << " K" << attributes[5] << " F" << station.feedrate << "\n";
+				}
 			}
-			if (station.rapid = false) {
-				output << "G01" << " X" << attributes[0] << " Y" << attributes[1] << " Z" << attributes[2] << " I" << attributes[3] << " J" << attributes[4] << " K" << attributes[5] << " F" << station.feedrate <<"\n";
+			if (attributes.size() == 3) {
+				station.current_x = stod(attributes[0]);
+				station.current_y = stod(attributes[1]);
+				station.current_z = stod(attributes[2]);
+
+				if (station.rapid = true) {
+					output << "G00" << " X" << attributes[0] << " Y" << attributes[1] << " Z" << attributes[2] << "\n";
+					station.rapid = false;
+				}
+				if (station.rapid = false) {
+					output << "G01" << " X" << attributes[0] << " Y" << attributes[1] << " Z" << attributes[2] << " F" << station.feedrate << "\n";
+				}
+			}
+			else {
+				cout << "GOTO: Non standard ammount of arguments \n";
 			}
 		}
-		if (attributes.size() == 3) {
-			if (station.rapid = true) {
-				output << "G00" << " X" << attributes[0] << " Y" << attributes[1] << " Z" << attributes[2] << "\n";
-				station.rapid = false;
+		if (station.arc == true) {
+			if (station.arc_i == 0 && station.arc_j == 0 && station.arc_k == 1) {
+				station.current_x = stod(attributes[0]);
+				station.current_y = stod(attributes[1]);
+				station.current_z = stod(attributes[2]);
+				output << "G02" << " X" << attributes[0] << " Y" << attributes[1] << " Z" << attributes[2] << " R" << station.arc_r << "\n";
 			}
-			if (station.rapid = false) {
-				output << "G01" << " X" << attributes[0] << " Y" << attributes[1] << " Z" << attributes[2] << " F" << station.feedrate << "\n";
+			if (station.arc_i == 0 && station.arc_j == 0 && station.arc_k == -1) {
+				station.current_x = stod(attributes[0]);
+				station.current_y = stod(attributes[1]);
+				station.current_z = stod(attributes[2]);
+				output << "GO3" << " X" << attributes[0] << " Y" << attributes[1] << " Z" << attributes[2] << " R" << station.arc_r << "\n";
 			}
-		}
-		else {
-			cout << "GOTO: Non standard ammount of arguments \n";
 		}
 	}
 	else {
@@ -596,8 +437,28 @@ void APTSource::GOTO(vector<string> attributes){
 	}
 
 }
-void APTSource::GODTLA(vector<string> attributes){}
-void APTSource::CIRCLE(vector<string> attributes){}
+void APTSource::GODTLA(vector<string> attributes){
+	
+}
+void APTSource::CIRCLE(vector<string> attributes){
+	if (attributes.size() == 11) {
+		station.arc = true;
+		station.arc_x = stod(attributes[0]);
+		station.arc_y = stod(attributes[1]);
+		station.arc_z = stod(attributes[2]);
+		station.arc_i = stod(attributes[3]);
+		station.arc_j = stod(attributes[4]);
+		station.arc_k = stod(attributes[5]);
+		station.arc_r = stod(attributes[6]);
+		station.arc_t = stod(attributes[7]);
+		station.arc_f = stod(attributes[8]);
+		station.arc_d = stod(attributes[9]);
+		station.arc_e = stod(attributes[10]);
+	}
+	else {
+		cout << "CIRCLE: Not Enough Arguments";
+	}
+}
 void APTSource::MSYS(vector<string> attributes){}
 void APTSource::CSLF(vector<string> attributes){}
 void APTSource::END_OF_PATH(){}

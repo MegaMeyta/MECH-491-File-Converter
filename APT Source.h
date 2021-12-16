@@ -18,7 +18,33 @@ namespace apt {
 		bool rapid;
 		string unit;
 		double feedrate;
+
+		//Current position of tool
+		double current_x;
+		double current_y;
+		double current_z;
+		double current_i;
+		double current_j;
+		double current_k;
+
+		//tool path circle parameters
+		bool arc;
+		double arc_x;
+		double arc_y;
+		double arc_z;
+		double arc_i;
+		double arc_j;
+		double arc_k;
+		double arc_r;
+		double arc_t;
+		double arc_f;
+		double arc_d;
+		double arc_e;
+
+		//Absolute Coordinate System
 		double  absolute[3][3];
+
+		//Tool Specifications
 		string tool_type;
 		double tool_diameter;
 		double tool_upper_radius;
@@ -48,78 +74,6 @@ namespace apt {
 		string removeSpaces(string line);
 
 		vector<string> getAttributes(string line);
-
-		/*void CALSUB(vector<string> attributes);
-
-		void COOLNT(vector<string> attributes);
-
-		void CUTCOM(vector<string> attributes);
-
-		void CYCLE(vector<string> attributes);
-
-		void END(vector<string> attributes);
-
-		void FEDRAT(vector<string> attributes);
-
-		void LIMIT(vector<string> attributes);
-
-		void LOADTL(vector<string> attributes);
-
-		void MACHIN(vector<string> attributes);
-
-		void MOVETO(vector<string> attributes);
-
-		void MSYS(vector<string> attributes);
-
-		void OFSTNO(vector<string> attributes);
-
-		void OPNAME(vector<string> attributes);
-
-		void OPTYPE(vector<string> attributes);
-
-		void ORIGIN(vector<string> attributes);
-
-		void PARTNO(vector<string> attributes);
-
-		void PPRINT(vector<string> attributes);
-
-		void RAPID(vector<string> attributes);
-
-		void REWIND(vector<string> attributes);
-
-		void SPINDL(vector<string> attributes);
-
-		void STOP(vector<string> attributes);
-
-		void TLNAME(vector<string> attributes);
-
-		void TOOLNO(vector<string> attributes);
-
-		void GOTO(vector<string> attributes);
-
-		void MOVE(vector<string> attributes);
-
-		void TOLER(vector<string> attributes);
-
-		void INTOL(vector<string> attributes);
-
-		void OUTTOL(vector<string> attributes);
-
-		void CUTTER(vector<string> attributes);
-
-		void MULTAX(vector<string> attributes);
-
-		void UNITS(vector<string> attributes);
-
-		void TLAXIS(vector<string> attributes);
-
-		void FINI(vector<string> attributes);
-
-		void CONTRL(vector<string> attributes);
-
-		void SYN(vector<string> attributes);
-
-		void MOVARC(vector<string> attributes);*/
 
 		void TOOL_PATH(vector<string> attributes);
 		void TLDATA(vector<string> attributes);

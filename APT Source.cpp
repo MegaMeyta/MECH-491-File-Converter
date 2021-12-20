@@ -438,7 +438,18 @@ void APTSource::GOTO(vector<string> attributes){
 
 }
 void APTSource::GODTLA(vector<string> attributes){
-	
+	if (attributes.size() == 3) {
+		double move_x = station.current_x + stod(attributes[0]);
+		double move_y = station.current_x + stod(attributes[1]);
+		double move_z = station.current_x + stod(attributes[2]);
+		output << "G01" << " X" << move_x << " Y" << move_y << " Z" << move_z << "\n";
+		station.current_x = move_x;
+		station.current_y = move_y;
+		station.current_z = move_z;
+	}
+	else {
+		cout << "GODTLA: Not Enough Arguments";
+	}
 }
 void APTSource::CIRCLE(vector<string> attributes){
 	if (attributes.size() == 11) {

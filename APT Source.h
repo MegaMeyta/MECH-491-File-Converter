@@ -12,12 +12,35 @@ using namespace std;
 
 namespace apt {
 
+	class tool {
+	public:
+
+		string tool_type;
+		double tool_diameter;
+		double tool_upper_radius;
+		double tool_lower_radius;
+		double tool_length;
+		double tool_taper_angle;
+		double tool_tip_angle;
+		double tool_x_center_r1;
+		double tool_y_center_r1;
+		double tool_x_center_r2;
+		double tool_y_center_r2;
+
+		tool(vector<string> attributes);
+	};
+
 	//This is where all global variables are stored (i.e. origin, tool, feedrate)
 	class workstation {
 	public: 
 		bool rapid;
 		string unit;
 		double feedrate;
+		vector<tool> tool_catalogue;
+		vector<string> tool_list;
+
+		int tool_n;
+		bool new_tool;
 
 		//Current position of tool
 		double current_x;
@@ -43,19 +66,6 @@ namespace apt {
 
 		//Absolute Coordinate System
 		double  absolute[3][3];
-
-		//Tool Specifications
-		string tool_type;
-		double tool_diameter;
-		double tool_upper_radius;
-		double tool_lower_radius;
-		double tool_length;
-		double tool_taper_angle;
-		double tool_tip_angle;
-		double tool_x_center_r1;
-		double tool_y_center_r1;
-		double tool_x_center_r2;
-		double tool_y_center_r2;
 
 		workstation();
 	};

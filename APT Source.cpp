@@ -7,6 +7,43 @@
 
 using namespace apt;
 
+tool::tool(vector<string> attributes) {
+	if (attributes[0] == "MILL") {
+		if (attributes.size() == 6) {
+			tool_type = attributes[0];
+			tool_diameter = stod(attributes[1]);
+			tool_lower_radius = stod(attributes[2]);
+			tool_length = stod(attributes[3]);
+			tool_taper_angle = stod(attributes[4]);
+			tool_tip_angle = stod(attributes[5]);
+		}
+
+		if (attributes.size() == 8) {
+			tool_type = attributes[0];
+			tool_diameter = stod(attributes[1]);
+			tool_lower_radius = stod(attributes[2]);
+			tool_length = stod(attributes[3]);
+			tool_taper_angle = stod(attributes[4]);
+			tool_tip_angle = stod(attributes[5]);
+			tool_x_center_r1 = stod(attributes[6]);
+			tool_y_center_r1 = stod(attributes[7]);
+		}
+
+		if (attributes.size() == 10) {
+			tool_type = attributes[0];
+			tool_diameter = stod(attributes[1]);
+			tool_lower_radius = stod(attributes[2]);
+			tool_length = stod(attributes[3]);
+			tool_taper_angle = stod(attributes[4]);
+			tool_tip_angle = stod(attributes[5]);
+			tool_x_center_r1 = stod(attributes[6]);
+			tool_y_center_r1 = stod(attributes[7]);
+			tool_x_center_r2 = stod(attributes[8]);
+			tool_y_center_r2 = stod(attributes[9]);
+		}
+	}
+}
+
 workstation::workstation() {
 	rapid = false;
 	for (int i = 0; i < 3; i++) {
@@ -36,16 +73,8 @@ workstation::workstation() {
 	arc_d = 0;
 	arc_e = 0;
 	
-	tool_diameter = 0;
-	tool_upper_radius = 0;
-	tool_lower_radius = 0;
-	tool_length = 0;
-	tool_taper_angle = 0;
-	tool_tip_angle = 0;
-	tool_x_center_r1 = 0;
-	tool_y_center_r1 = 0;
-	tool_x_center_r2 = 0;
-	tool_y_center_r2 = 0;
+	tool_n = 0;
+	new_tool = false;
 }
 
 APTSource::APTSource(string inputFile) {
@@ -365,8 +394,38 @@ void APTSource::counter() {
 	input.close(); 
 }
 
-void APTSource::TOOL_PATH(vector<string> attributes){}
-void APTSource::TLDATA(vector<string> attributes){}
+void APTSource::TOOL_PATH(vector<string> attributes){
+	bool check = false;
+	int check_n = 0;
+	if (attributes.size() == 3) {
+		output << "(" << attributes[0] << " , TOOL: " << attributes[2] << ")\n";
+		for (int i = 0; i < station.tool_list.size(); i++) {
+			if (station.tool_list[i] == attributes[2]) {
+				check = true;
+				check_n = i + 1;
+			}
+		}
+		if (check) {
+			if (check_n != station.tool_n) {
+				output << "T" << check_n << " M6\n";
+				station.tool_n = check_n;
+			}
+		}
+		if (!check) {
+			station.tool_list.push_back(attributes[2]);
+			station.new_tool = true;
+			output << "T" << station.tool_list.size() << " M6\n";
+		}
+	}
+}
+void APTSource::TLDATA(vector<string> attributes){
+	
+	if (station.new_tool) {
+		tool temp(attributes);
+		station.tool_catalogue.push_back(temp);
+		station.new_tool = false;
+	}
+}
 void APTSource::FEDRAT(vector<string> attributes){
 	if (attributes.size() == 2) {
 		station.unit = attributes[0];
@@ -470,6 +529,13 @@ void APTSource::CIRCLE(vector<string> attributes){
 		cout << "CIRCLE: Not Enough Arguments";
 	}
 }
-void APTSource::MSYS(vector<string> attributes){}
-void APTSource::CSLF(vector<string> attributes){}
-void APTSource::END_OF_PATH(){}
+void APTSource::MSYS(vector<string> attributes){
+	if (attributes.size() == 9) {
+		if (stod(attributes[0]) == 0 && stod(attributes[1]) == 0 && stod(attributes[2]) == 0 && stod(attributes[3]) == 1 && stod(attributes[4]) == 0 &&	stod(attributes[5]) == 0 && stod(attributes[6]) == 0 && stod(attributes[7]) == 1 && stod(attributes[8]) == 0) {
+			output << "G54\n";
+		}
+	}
+}
+void APTSource::END_OF_PATH(){
+	output << "M5\n";
+}

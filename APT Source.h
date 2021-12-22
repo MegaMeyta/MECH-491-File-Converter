@@ -78,6 +78,8 @@ namespace apt {
 		string outputFileName;
 		ifstream input;
 		ofstream output;
+		int line_n;
+		int gcode_n;
 
 		APTSource(string inputFile);
 
@@ -94,12 +96,11 @@ namespace apt {
 		void GODTLA(vector<string> attributes);
 		void CIRCLE(vector<string> attributes);
 		void MSYS(vector<string> attributes);
-		void CSLF(vector<string> attributes);
 		void END_OF_PATH();
 
 
 		void convert();
 
-		void counter();
+		//void counter();
 	};
 }

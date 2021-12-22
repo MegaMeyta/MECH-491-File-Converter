@@ -78,14 +78,16 @@ workstation::workstation() {
 }
 
 APTSource::APTSource(string inputFile) {
+	gcode_n = 0;
+	line_n = 0;
 	this->input.open(inputFile);
 	if (this->input.is_open()) {
 		this->inputFileName = inputFile;
 		this->input.close();
-		cout << "file found";
+		std::cout << "file found";
 	}
 	else {
-		cout << "File Does Not Exist";
+		std::cout << "File Does Not Exist";
 	}
 
 
@@ -125,6 +127,8 @@ vector<string> APTSource::getAttributes(string line) {
 }
 
 void APTSource::convert() {
+	line_n = 0;
+	gcode_n = 0;
 	input.open(inputFileName);
 	int temp = inputFileName.find_last_of('.');
 	outputFileName = inputFileName.substr(0, temp) + ".gcode";
@@ -132,7 +136,22 @@ void APTSource::convert() {
 	string line;
 	string command;
 	vector<string> attributes;
+	output << "N" << gcode_n << " " << "G17 ";
+	int unit; 
+	std::cout << "Type of Units (1 for Metric, 2 for Imperial): ";
+	std::cin >> unit;
+	if (unit == 1) {
+		output << "G21 ";
+	}
+	else if (unit == 2) {
+		output << "G20 ";
+	}
+
+	output << "G94 G90\n\n";
+	gcode_n++;
+
 	while (getline(input, line)) {
+		line_n++;
 		temp = line.find_first_of('/');
 		command = removeSpaces(line.substr(0, temp));
 		attributes = getAttributes(line);
@@ -226,8 +245,6 @@ void APTSource::convert() {
 			CIRCLE(attributes);
 		if (command == "MSYS")
 			MSYS(attributes);
-		if (command == "CSLF")
-			CSLF(attributes);
 		if (command == "ENDOFPATH")
 			END_OF_PATH();
 	}
@@ -236,7 +253,7 @@ void APTSource::convert() {
 	output.close();
 }
 
-void APTSource::counter() {
+/*void APTSource::counter() {
 	input.open(inputFileName);
 	int temp;
 	string line;
@@ -354,21 +371,21 @@ void APTSource::counter() {
 			movarc++;
 	}
 
-	cout << "CALSUB: " << calsub << "\n";
-	cout << "COOLNT: " << coolnt << "\n";
-	cout << "CUTCOM: " << cutcom << "\n";
-	cout << "CYCLE: " << cycle << "\n";
-	cout << "END: " << end << "\n";
-	cout << "FEDRAT: " << fedrat << "\n";
-	cout << "LIMIT: " << limit << "\n";
-	cout << "LOADTL: " << loadtl << "\n";
-	cout << "MACHIN: " << machin << "\n";
-	cout << "MOVETO: " << moveto << "\n";
-	cout << "MSYS: " << msys << "\n";
-	cout << "OFSTNO: " << ofstno << "\n";
-	cout << "OPNAME: " << opname << "\n";
-	cout << "OPTYPE: " << optype << "\n";
-	cout << "ORIGIN: " << origin << "\n";
+	std::cout << "CALSUB: " << calsub << "\n";
+	std::cout << "COOLNT: " << coolnt << "\n";
+	std::cout << "CUTCOM: " << cutcom << "\n";
+	std::cout << "CYCLE: " << cycle << "\n";
+	std::cout << "END: " << end << "\n";
+	std::cout << "FEDRAT: " << fedrat << "\n";
+	std::cout << "LIMIT: " << limit << "\n";
+	std::cout << "LOADTL: " << loadtl << "\n";
+	std::cout << "MACHIN: " << machin << "\n";
+	std::cout << "MOVETO: " << moveto << "\n";
+	std::cout << "MSYS: " << msys << "\n";
+	std::cout << "OFSTNO: " << ofstno << "\n";
+	std::cout << "OPNAME: " << opname << "\n";
+	std::cout << "OPTYPE: " << optype << "\n";
+	std:: << "ORIGIN: " << origin << "\n";
 	cout << "PARTNO: " << partno << "\n";
 	cout << "PPRINT: " << pprint << "\n";
 	cout << "RAPID: " << rapid << "\n";
@@ -392,7 +409,7 @@ void APTSource::counter() {
 	cout << "MOVARC: " << movarc << "\n";
 
 	input.close(); 
-}
+}*/
 
 void APTSource::TOOL_PATH(vector<string> attributes){
 	bool check = false;
@@ -407,14 +424,16 @@ void APTSource::TOOL_PATH(vector<string> attributes){
 		}
 		if (check) {
 			if (check_n != station.tool_n) {
-				output << "T" << check_n << " M6\n";
+				output << "N" << gcode_n << " " << "T" << check_n << " M6\n";
 				station.tool_n = check_n;
+				gcode_n++;
 			}
 		}
 		if (!check) {
 			station.tool_list.push_back(attributes[2]);
 			station.new_tool = true;
-			output << "T" << station.tool_list.size() << " M6\n";
+			output << "N" << gcode_n << " " << "T" << station.tool_list.size() << " M6\n";
+			gcode_n++;
 		}
 	}
 }
@@ -430,9 +449,27 @@ void APTSource::FEDRAT(vector<string> attributes){
 	if (attributes.size() == 2) {
 		station.unit = attributes[0];
 		station.feedrate = stod(attributes[1]);
+		if (station.unit == "IPM") {
+			output << "N" << gcode_n << " " << "G20 G94 M3\n";
+			gcode_n++;
+		}
+		else if (station.unit == "IPR") {
+			output << "N" << gcode_n << " " << "G20 G95 M3\n";
+			gcode_n++;
+		}
+		else if (station.unit == "MMPM") {
+			output << "N" << gcode_n << " " << "G21 G94 M3\n";
+			gcode_n;
+		}
+		else if (station.unit == "MMPR") {
+			output << "N" << gcode_n << " " << "G21 G95 M3\n";
+			gcode_n;
+		}
+		else
+			std::cout << line_n << ": Not A Valid Feedrate Type\n";
 	}
 	else {
-		cout << "FEDRAT: Wrong ammount of arguments \n";
+		cout << "FEDRAT: Wrong ammount of arguments: " << line_n << "\n";
 	}
 }
 void APTSource::RAPID(){
@@ -451,29 +488,33 @@ void APTSource::GOTO(vector<string> attributes){
 				station.current_j = stod(attributes[4]);
 				station.current_k = stod(attributes[5]);
 
-				if (station.rapid = true) {
-					output << "G00" << " X" << attributes[0] << " Y" << attributes[1] << " Z" << attributes[2] << " I" << attributes[3] << " J" << attributes[4] << " K" << attributes[5] << "\n";
+				if (station.rapid == true) {
+					output << "N" << gcode_n << " " << "G00" << " X" << attributes[0] << " Y" << attributes[1] << " Z" << attributes[2] << " I" << attributes[3] << " J" << attributes[4] << " K" << attributes[5] << "\n";
 					station.rapid = false;
+					gcode_n++;
 				}
-				if (station.rapid = false) {
-					output << "G01" << " X" << attributes[0] << " Y" << attributes[1] << " Z" << attributes[2] << " I" << attributes[3] << " J" << attributes[4] << " K" << attributes[5] << " F" << station.feedrate << "\n";
+				if (station.rapid == false) {
+					output << "N" << gcode_n << " " << "G01" << " X" << attributes[0] << " Y" << attributes[1] << " Z" << attributes[2] << " I" << attributes[3] << " J" << attributes[4] << " K" << attributes[5] << " F" << station.feedrate << "\n";
+					gcode_n++;
 				}
 			}
-			if (attributes.size() == 3) {
+			else if (attributes.size() == 3) {
 				station.current_x = stod(attributes[0]);
 				station.current_y = stod(attributes[1]);
 				station.current_z = stod(attributes[2]);
 
-				if (station.rapid = true) {
-					output << "G00" << " X" << attributes[0] << " Y" << attributes[1] << " Z" << attributes[2] << "\n";
+				if (station.rapid == true) {
+					output << "N" << gcode_n << " " << "G00" << " X" << attributes[0] << " Y" << attributes[1] << " Z" << attributes[2] << "\n";
 					station.rapid = false;
+					gcode_n++;
 				}
-				if (station.rapid = false) {
-					output << "G01" << " X" << attributes[0] << " Y" << attributes[1] << " Z" << attributes[2] << " F" << station.feedrate << "\n";
+				if (station.rapid == false) {
+					output << "N" << gcode_n << " " << "G01" << " X" << attributes[0] << " Y" << attributes[1] << " Z" << attributes[2] << " F" << station.feedrate << "\n";
+					gcode_n++;
 				}
 			}
 			else {
-				cout << "GOTO: Non standard ammount of arguments \n";
+				cout << "GOTO: Non standard ammount of arguments: " << line_n << "\n";
 			}
 		}
 		if (station.arc == true) {
@@ -481,18 +522,21 @@ void APTSource::GOTO(vector<string> attributes){
 				station.current_x = stod(attributes[0]);
 				station.current_y = stod(attributes[1]);
 				station.current_z = stod(attributes[2]);
-				output << "G02" << " X" << attributes[0] << " Y" << attributes[1] << " Z" << attributes[2] << " R" << station.arc_r << "\n";
+				output << "N" << gcode_n << " " << "G02" << " X" << attributes[0] << " Y" << attributes[1] << " Z" << attributes[2] << " R" << station.arc_r << "\n";
+				gcode_n++;
 			}
 			if (station.arc_i == 0 && station.arc_j == 0 && station.arc_k == -1) {
 				station.current_x = stod(attributes[0]);
 				station.current_y = stod(attributes[1]);
 				station.current_z = stod(attributes[2]);
-				output << "GO3" << " X" << attributes[0] << " Y" << attributes[1] << " Z" << attributes[2] << " R" << station.arc_r << "\n";
+				output << "N" << gcode_n << " " << "GO3" << " X" << attributes[0] << " Y" << attributes[1] << " Z" << attributes[2] << " R" << station.arc_r << "\n";
+				gcode_n++;
 			}
+			station.arc = false;
 		}
 	}
 	else {
-		cout << "GOTO: no arguments found \n";
+		cout << "GOTO: no arguments found: " << line_n << "\n";
 	}
 
 }
@@ -501,7 +545,8 @@ void APTSource::GODTLA(vector<string> attributes){
 		double move_x = station.current_x + stod(attributes[0]);
 		double move_y = station.current_x + stod(attributes[1]);
 		double move_z = station.current_x + stod(attributes[2]);
-		output << "G01" << " X" << move_x << " Y" << move_y << " Z" << move_z << "\n";
+		output << "N" << gcode_n << " " << "G01" << " X" << move_x << " Y" << move_y << " Z" << move_z << "\n";
+		gcode_n++;
 		station.current_x = move_x;
 		station.current_y = move_y;
 		station.current_z = move_z;
@@ -526,16 +571,18 @@ void APTSource::CIRCLE(vector<string> attributes){
 		station.arc_e = stod(attributes[10]);
 	}
 	else {
-		cout << "CIRCLE: Not Enough Arguments";
+		cout << "CIRCLE: Not Enough Arguments: " <<  line_n << "\n";
 	}
 }
 void APTSource::MSYS(vector<string> attributes){
 	if (attributes.size() == 9) {
 		if (stod(attributes[0]) == 0 && stod(attributes[1]) == 0 && stod(attributes[2]) == 0 && stod(attributes[3]) == 1 && stod(attributes[4]) == 0 &&	stod(attributes[5]) == 0 && stod(attributes[6]) == 0 && stod(attributes[7]) == 1 && stod(attributes[8]) == 0) {
-			output << "G54\n";
+			output << "N" << gcode_n << " " << "G54\n";
+			gcode_n++;
 		}
 	}
 }
 void APTSource::END_OF_PATH(){
-	output << "M5\n";
+	output << "N" << gcode_n << " " << "M5\n";
+	gcode_n++;
 }
